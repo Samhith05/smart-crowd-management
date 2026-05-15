@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Crowd Management System</title>
+    <link rel="stylesheet" href="login-style.css">
+</head>
+
+<body class="login-body">
+    <!-- Background gradient -->
+    <div class="background-animation"></div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <!-- Logo & Branding Section -->
+        <div class="login-header">
+            <div class="logo-section">
+                <h1 class="logo-title">🏢</h1>
+                <h2 class="system-name">Smart Crowd Management System</h2>
+                <p class="system-tagline">Real-Time Monitoring for Safer Public Events</p>
+            </div>
+        </div>
+
+        <!-- Login Form Card -->
+        <div class="login-card">
+            <h3 class="login-title">Access Dashboard</h3>
+            <p class="login-subtitle">Enter your credentials to continue</p>
+
+            <form class="login-form" id="loginForm">
+                <!-- Email/Username Field -->
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <span class="label-icon">👤</span>
+                        Email or Username
+                    </label>
+                    <input type="text" id="email" name="email" class="form-input"
+                        placeholder="Enter your email or username" required title="Enter your email or username"
+                        aria-label="Email or Username">
+                    <span class="error-message" id="emailError"></span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <span class="label-icon">🔒</span>
+                        Password
+                    </label>
+                    <div class="password-field">
+                        <input type="password" id="password" name="password" class="form-input"
+                            placeholder="Enter your password" required title="Enter your password"
+                            aria-label="Password">
+                        <button type="button" class="toggle-password" id="togglePassword"
+                            title="Toggle password visibility" aria-label="Toggle password visibility">
+                            <span id="passwordToggleIcon">👁️</span>
+                        </button>
+                    </div>
+                    <span class="error-message" id="passwordError"></span>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe" name="rememberMe"
+                            title="Remember my email for next login" aria-label="Remember me">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-button" id="loginBtn">
+                    <span class="button-text">Sign In</span>
+                    <span class="button-spinner" id="loginSpinner"></span>
+                </button>
+
+                <!-- Error Alert -->
+                <div class="alert alert-error" id="alertError" style="display: none;">
+                    <span class="alert-icon">❌</span>
+                    <span class="alert-text" id="alertErrorText"></span>
+                </div>
+
+                <!-- Success Alert -->
+                <div class="alert alert-success" id="alertSuccess" style="display: none;">
+                    <span class="alert-icon">✅</span>
+                    <span class="alert-text">Login successful! Redirecting...</span>
+                </div>
+            </form>
+
+
+        </div>
+
+        <!-- Footer -->
+        <div class="login-footer">
+            <p>&copy; 2026 Smart Crowd Management System. All rights reserved.</p>
+            <p>VNR Vignana Jyothi College - Event Management</p>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="login-script.js"></script>
+</body>
+
+</html>

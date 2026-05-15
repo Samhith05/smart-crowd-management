@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Crowd Management System - Real-Time Monitoring</title>
+
+    <!-- Link CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js CDN for bar charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    <!-- Leaflet.js CDN for mapping -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+    <!-- Firebase SDKs (Compat versions for global variable support) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="title">🏢 Smart Crowd Management System</h1>
+                <p class="tagline">Real-Time Monitoring for Safer Public Events</p>
+            </div>
+            <div class="header-right">
+                <div class="live-clock" id="liveClock">
+                    <span class="clock-label">Current Time:</span>
+                    <span class="clock-value" id="clockDisplay">00:00:00</span>
+                </div>
+                <div class="firebase-sync" id="firebaseSyncStatus" title="Firebase Sync Status">
+                    🟢 Firebase
+                </div>
+                <div class="user-section" id="userSection" style="display: none;">
+                    <span class="user-email" id="userEmail"></span>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Emergency Alert Section -->
+        <section class="emergency-alert" id="emergencyAlert" style="display: none;">
+            <div class="alert-content">
+                <span class="alert-icon">🚨</span>
+                <span class="alert-text" id="alertText">Emergency Alert: Multiple zones overcrowded!</span>
+            </div>
+        </section>
+
+        <!-- System Status Section -->
+        <section class="status-section">
+            <div class="status-box" id="statusBox">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <div class="status-text">
+                    <span class="status-label">System Status:</span>
+                    <span class="status-value" id="statusValue">Initializing...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Monitoring Cards Section -->
+            <section class="monitoring-section">
+                <h2 class="section-title">Real-Time Crowd Monitoring</h2>
+                <div class="zones-container" id="zonesContainer">
+                    <!-- Zones will be dynamically populated from Firestore -->
+                    <div class="loading">Loading zones...</div>
+                </div>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="chart-section">
+                <h2 class="section-title">Density Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="densityChart"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <!-- Map Section -->
+        <section class="map-section">
+            <div class="map-section-header">
+                <h2 class="section-title">Live Location Map</h2>
+                <button class="config-btn" id="configZonesBtn" title="Configure Zones on Map">⚙️ Configure
+                    Zones</button>
+            </div>
+            <div class="map-container" id="crowdMap"></div>
+        </section>
+
+        <!-- Safety Instructions Section -->
+        <section class="safety-section">
+            <h2 class="section-title">Safety Instructions</h2>
+            <div class="safety-instructions">
+                <div class="safety-card">
+                    <span class="safety-icon">🚪</span>
+                    <h3>Follow Designated Exits</h3>
+                    <p>Always use marked emergency exits and follow staff guidance.</p>
+                </div>
+                <div class="safety-card">
+                    <span class="safety-icon">⚠️</span>
+                    <h3>Avoid Overcrowded Zones</h3>
+                    <p>Move away from red-marked zones and seek safer areas.</p>
+                </div>
+                <div class="safety-card">
+                    <span class="safety-icon">📢</span>
+                    <h3>Listen to Announcements</h3>
+                    <p>Pay attention to emergency announcements and staff instructions.</p>
+                </div>
+                <div class="safety-card">
+                    <span class="safety-icon">🧘</span>
+                    <h3>Stay Calm</h3>
+                    <p>Remain calm during any evacuation procedures or emergencies.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section class="statistics-section">
+            <h2 class="section-title">System Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalZones">0</div>
+                    <div class="stat-label">Total Zones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgDensity">0%</div>
+                    <div class="stat-label">Avg Density</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="lastUpdate">--:--</div>
+                    <div class="stat-label">Last Update</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Smart Crowd Management System. All rights reserved. | Real-Time Monitoring Dashboard</p>
+    </footer>
+
+    <!-- Zone Configuration Modal -->
+    <div class="modal" id="zoneConfigModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Zone Configuration</h2>
+                <button class="modal-close" id="closeConfigBtn">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Add New Zone Section -->
+                <div class="add-zone-section">
+                    <h3>Add New Zone</h3>
+
+                    <!-- Map Selection Option -->
+                    <div class="map-selection-option">
+                        <button type="button" class="btn-map-select" id="enableMapSelectBtn">
+                            🗺️ Click on Map to Select Location
+                        </button>
+                        <div class="map-select-status" id="mapSelectStatus" style="display: none;">
+                            <span class="status-indicator">🎯 Click on the map to select zone location</span>
+                            <button type="button" class="btn-cancel-map" id="cancelMapSelectBtn">✕ Cancel</button>
+                        </div>
+                    </div>
+
+                    <div class="divider-text">OR</div>
+
+                    <div class="form-group">
+                        <label for="zoneName">Zone Name:</label>
+                        <input type="text" id="zoneName" placeholder="e.g., Zone A, Entrance, Main Hall" maxlength="30"
+                            title="Zone Name" aria-label="Zone Name">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="zoneLatitude">Latitude:</label>
+                            <input type="number" id="zoneLatitude" placeholder="17.5393" step="0.00001"
+                                title="Latitude coordinate" aria-label="Latitude coordinate">
+                        </div>
+                        <div class="form-group">
+                            <label for="zoneLongitude">Longitude:</label>
+                            <input type="number" id="zoneLongitude" placeholder="78.3859" step="0.00001"
+                                title="Longitude coordinate" aria-label="Longitude coordinate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zoneRadius">Radius (meters):</label>
+                        <input type="number" id="zoneRadius" value="50" min="10" max="500" step="10"
+                            title="Zone radius in meters (10-500)" aria-label="Zone radius in meters">
+                    </div>
+
+                    <button class="btn-add-zone" id="addZoneBtn">➕ Add Zone</button>
+                </div>
+
+                <!-- Existing Zones List -->
+                <div class="zones-list-section">
+                    <h3>Configured Zones</h3>
+                    <div class="zones-list" id="zonesList">
+                        <p class="no-zones">No zones configured yet. Add a zone above.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" id="resetZonesBtn">🔄 Reset to Default</button>
+                <button class="btn-primary" id="saveConfigBtn">✅ Save & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
