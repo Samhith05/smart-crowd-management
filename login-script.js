@@ -79,10 +79,9 @@ function validateEmail() {
         return false;
     }
 
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$|^[a-zA-Z0-9_]{3,}$/;
-    if (!emailRegex.test(email)) {
-        showError('email', 'Please enter a valid email or username');
+    // Accept any input with at least 3 characters (email or username)
+    if (email.length < 3) {
+        showError('email', 'Email or username must be at least 3 characters');
         return false;
     }
 
@@ -187,7 +186,7 @@ function authenticateUser(email, password, rememberMe) {
 
     // In production, this would verify against Firebase/backend
     // For now, we validate basic format (this should be connected to real authentication)
-    const isValidUser = (email.length > 3 && password.length >= 3);
+    const isValidUser = (email.length >= 3 && password.length >= 3);
 
     if (isValidUser) {
         // Show success message
@@ -262,9 +261,6 @@ function setLoadingState(isLoading) {
         loginBtn.classList.remove('loading');
         loginBtn.disabled = false;
     }
-}
-
-
 }
 
 // ============================================
