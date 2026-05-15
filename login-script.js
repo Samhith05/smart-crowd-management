@@ -201,7 +201,7 @@ function authenticateUser(email, password, rememberMe) {
 
         // Redirect to dashboard after 1.5 seconds
         setTimeout(() => {
-            window.location.href = 'index.html';
+            window.location.href = window.location.origin + '/index.html';
         }, 1500);
     } else {
         // Show error message

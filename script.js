@@ -113,7 +113,7 @@ function checkAuthentication() {
 
     if (!isLoggedIn || !userEmail) {
         console.warn("⚠️ Not authenticated, redirecting to login...");
-        window.location.href = 'login.html';
+        window.location.href = window.location.origin + '/login.html';
         return;
     }
 
@@ -169,7 +169,7 @@ function handleLogout() {
     console.log("✅ User logged out");
 
     // Redirect to login page
-    window.location.href = 'login.html';
+    window.location.href = window.location.origin + '/login.html';
 }
 
 // ============================================
